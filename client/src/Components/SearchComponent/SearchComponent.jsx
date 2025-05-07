@@ -2,41 +2,41 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "../../Config/Debounce";
 import { searchUserAction } from "../../Redux/User/Action";
-import "./SearchComponent.css";
 import SearchUserCard from "./SearchUserCard";
 
-
-const SearchComponent = ({setIsSearchVisible}) => {
+const SearchComponent = () => {
   const token = localStorage.getItem("token");
-  const {user}=useSelector(store=>store);
+  const { user } = useSelector((store) => store);
   const dispatch = useDispatch();
+
   const handleSearchUser = (query) => {
-    const data = {
-      jwt: token,
-      query,
-    };
-    dispatch(searchUserAction(data));
+    dispatch(searchUserAction({ jwt: token, query }));
   };
+
   const debouncedHandleSearchUser = debounce(handleSearchUser, 1000);
 
   return (
-    <div className="search-container">
-      <div className="px-3 pb-5">
-        <h1 className="text-xl pb-5">Search</h1>
-
-        <input
-          onChange={(e) =>debouncedHandleSearchUser(e.target.value)}
-          className="search-input"
-          type="text"
-          placeholder="Search..."
-        />
-      </div>
-
-      <hr />
-      <div className="px-3 pt-5">
-        {!user?.searchResult?.isError?user?.searchResult?.map((item) => (
-          <SearchUserCard setIsSearchVisible={setIsSearchVisible} key={item.id} username={item.username} image={item?.image}/>
-        )):<h1 className="pt-10 font-bold text-center">User Not Exist</h1>}
+    <div className="w-full h-screen overflow-y-auto p-4 bg-white border-r">
+      <h1 className="text-xl mb-4 font-semibold">Search</h1>
+      <input
+        onChange={(e) => debouncedHandleSearchUser(e.target.value)}
+        className="w-full px-3 py-2 rounded bg-gray-100 focus:outline-none"
+        type="text"
+        placeholder="Search..."
+      />
+      <hr className="my-4" />
+      <div className="space-y-3">
+        {!user?.searchResult?.isError ? (
+          user?.searchResult?.map((item) => (
+            <SearchUserCard
+              key={item.id}
+              username={item.username}
+              image={item?.image}
+            />
+          ))
+        ) : (
+          <p className="text-center font-bold pt-10">User Not Exist</p>
+        )}
       </div>
     </div>
   );

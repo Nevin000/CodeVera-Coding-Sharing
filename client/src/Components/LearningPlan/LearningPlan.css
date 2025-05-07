@@ -5,192 +5,289 @@ body {
 }
 
 /* Headings and layout */
-.learning_plan-header {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #262626;
+/* LearningPlan.css */
+
+.learning-plan-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
-.ant-btn-primary {
-  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  border: none;
-  color: white;
-  font-weight: 500;
-  border-radius: 1rem;
-  transition: all 0.3s ease;
-}
-
-.ant-btn-primary:hover {
-  opacity: 0.9;
-}
-
-.ant-card {
-  border: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  border-radius: 1rem;
-  transition: transform 0.2s ease;
-  background-color: #fff;
-}
-
-.ant-card:hover {
-  transform: translateY(-4px);
-}
-
-.ant-collapse > .ant-collapse-item > .ant-collapse-header {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.ant-tag {
-  font-size: 0.75rem;
-  border-radius: 1rem;
-  padding: 0.25rem 0.75rem;
-}
-
-.ant-tag-blue {
-  background-color: #4cb5f9;
-  color: white;
-}
-
-.ant-tag-orange {
-  background-color: #f77f00;
-  color: white;
-}
-
-.ant-tag-red {
-  background-color: #f44336;
-  color: white;
-}
-
-/* Input/Forms */
-.ant-input,
-.ant-textarea,
-.ant-picker {
-  border-radius: 0.75rem;
-  background-color: #fafafa;
-  border: 1px solid #dbdbdb;
-}
-
-.ant-modal {
-  border-radius: 1rem;
-  padding: 1.5rem;
-}
-
-/* Checkboxes */
-.ant-checkbox-inner {
-  border-radius: 4px;
-}
-
-/* Resource links */
-.resource-link {
-  color: #3897f0;
-  font-weight: 500;
-}
-
-/* Subtle hover animation */
-.ant-btn-icon-only {
-  border-radius: 50%;
-  transition: background 0.3s;
-}
-
-.ant-btn-icon-only:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-
-.header-bar {
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-  padding: 1rem;
-  color: white;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  border-radius: 0 0 1rem 1rem;
+/* Header Styles */
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
 }
 
+.header-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
-/* ===================== */
-/* 🌸 FORM CONTAINER 🌸  */
-/* ===================== */
-
-.ant-modal-content {
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
   background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #7c3aed;
+}
 
+.empty-state-small {
+  text-align: center;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
 
-.ant-form-item-label > label {
-  font-size: 14px;
-  color: #555;
+/* Plan Grid */
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.plan-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.plan-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin: 0;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin: 1.5rem 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #7c3aed;
+  transition: width 0.5s ease;
+}
+
+/* Topics Section */
+.topic-section {
+  margin-top: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
   font-weight: 500;
-  margin-bottom: 0.25rem;
+  color: #495057;
+  margin: 0;
 }
 
-.ant-input,
-.ant-textarea,
-.ant-picker,
-.ant-select-selector {
-  background-color: #f8f9fa;
-  border: 1px solid #dbdbdb;
-  padding: 10px 14px;
-  border-radius: 1rem;
-  font-size: 14px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.topic-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e9ecef;
 }
 
-.ant-input:focus,
-.ant-textarea:focus,
-.ant-picker-focused,
-.ant-select-focused {
-  border-color: #ef476f;
-  box-shadow: 0 0 0 2px rgba(239, 71, 111, 0.2);
+.topic-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-
-
-.ant-picker {
-  width: 100%;
-  font-size: 14px;
-  padding: 10px 14px;
+.topic-content {
+  flex-grow: 1;
 }
 
-
-
-.ant-checkbox-wrapper {
-  font-size: 14px;
-  color: #444;
+.topic-title {
+  font-weight: 500;
+  margin: 0;
+  color: #2d3436;
 }
 
-.ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #ef476f;
-  border-color: #ef476f;
+.topic-title.completed {
+  text-decoration: line-through;
+  color: #adb5bd;
 }
 
-
-
-.ant-input-textarea {
-  padding: 10px 14px;
-  font-size: 14px;
+.topic-description {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
 }
 
+.topic-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
 
+/* Resource List */
+.resource-list {
+  margin-top: 0.75rem;
+  padding-left: 1.5rem;
+}
 
-.ant-modal-footer .ant-btn-primary {
-  background: linear-gradient(to right, #f09433, #e6683c, #dc2743);
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.resource-link {
+  color: #7c3aed;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.resource-link:hover {
+  color: #6b21a8;
+  text-decoration: underline;
+}
+
+/* Tags */
+.status-tag {
+  border-radius: 4px;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+}
+
+.tag-purple {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: 1px solid #d8b4fe;
+}
+
+.tag-red {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+/* Buttons */
+.primary-button {
+  background: #7c3aed;
+  color: white;
   border: none;
-  border-radius: 2rem;
-  font-weight: bold;
-  padding: 0.5rem 1.25rem;
-  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s ease;
 }
 
-.ant-modal-footer .ant-btn-default {
-  border-radius: 2rem;
-  padding: 0.5rem 1.25rem;
-  font-size: 14px;
+.primary-button:hover {
+  background: #6b21a8;
+  color: white;
+}
+
+.secondary-button {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #e9d5ff;
+  color: #6b21a8;
+}
+
+/* Modal Forms */
+.modal-form .ant-form-item-label label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.custom-divider {
+  margin: 1.5rem 0;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .learning-plan-container {
+    padding: 1rem;
+  }
+  
+  .plan-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading and Error States */
+.ant-spin {
+  color: #7c3aed;
+}
+
+.ant-alert-error {
+  border-radius: 8px;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.text-gray-500 {
+  color: #6c757d;
 }

@@ -1,103 +1,114 @@
 import React, { useEffect, useState } from "react";
 import { TbCircleDashed } from "react-icons/tb";
+import { FiEdit, FiMessageSquare } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { followUserAction, unFollowUserAction } from "../../Redux/User/Action";
-import "./UserDetailCard.css"
-// import { isReqUser } from '../../Config/Logic'
 
 const UserDetailCard = ({ user, isRequser, isFollowing }) => {
-
   const token = localStorage.getItem("token");
   const { post } = useSelector((store) => store);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [isFollow,setIsFollow]=useState(false);
+  const [isFollow, setIsFollow] = useState(false);
 
-  const goToAccountEdit = () => {
-    navigate("/account/edit");
-  };
+  const goToAccountEdit = () => navigate("/account/edit");
 
-  console.log("user --- ", user);
-  
-
-  const data = {
-    jwt: token,
-    userId: user?.id,
-  };
+  const data = { jwt: token, userId: user?.id };
 
   const handleFollowUser = () => {
     dispatch(followUserAction(data));
-    console.log("follow");
-    setIsFollow(true)
+    setIsFollow(true);
   };
 
   const handleUnFollowUser = () => {
     dispatch(unFollowUserAction(data));
+    setIsFollow(false);
   };
 
-  useEffect(()=>{
-setIsFollow(isFollowing)
-  },[isFollowing])
+  useEffect(() => {
+    setIsFollow(isFollowing);
+  }, [isFollowing]);
 
   return (
-    <div className="py-10">
-      <div className="flex items-center">
-        <div className="">
-           <img
-          className="h-20 w-20 lg:w-32 lg:h-32 rounded-full"
-          src={
-            user?.image ||
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          }
-          alt=""
-        />
+    <div className="w-full max-w-5xl mx-auto bg-white shadow rounded-md">
+      {/* Cover Photo */}
+      <div className="relative h-48 bg-gray-200 rounded-t-md">
+        {/* Profile Picture */}
+        <div className="absolute -bottom-12 left-6">
+          <img
+            className="h-24 w-24 rounded-full border-4 border-white object-cover"
+            src={
+              user?.image ||
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            }
+            alt={user?.username}
+          />
         </div>
-       
+      </div>
 
-        <div className="ml-10 space-y-5 text-xs w-[50%] md:w-[60%] lg:w-[80%]">
-          <div className=" flex space-x-10 items-center">
-            <p className="text-base">{user?.username}</p>
-            <button className="text-xs py-1 px-5 bg-slate-100 hover:bg-slate-300 rounded-md font-semibold">
-              {isRequser ? (
-                <span onClick={goToAccountEdit}>Edit profile</span>
-              ) : isFollow ? (
-                <span onClick={handleUnFollowUser}>Unfollow </span>
-              ) : (
-                <span onClick={handleFollowUser}>Follow</span>
-              )}
+      {/* Info Section */}
+      <div className="pt-16 pb-6 px-6 md:flex md:items-center md:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">{user?.username}</h2>
+          <p className="text-gray-600">{user?.name}</p>
+          <p className="text-sm text-gray-700 mt-1">{user?.bio}</p>
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-4 md:mt-0 flex gap-3 flex-wrap items-center">
+          {isRequser ? (
+            <button
+              onClick={goToAccountEdit}
+              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-medium"
+            >
+              <FiEdit size={16} />
+              Edit Profile
             </button>
-            <button className="text-xs py-1 px-5 bg-slate-100 hover:bg-slate-300 rounded-md font-semibold">
-              {isRequser ? "Add tools" : "Message"}
+          ) : isFollow ? (
+            <button
+              onClick={handleUnFollowUser}
+              className="bg-gray-100 hover:bg-gray-200 px-5 py-2 rounded-md text-sm font-medium"
+            >
+              Following
             </button>
-            <TbCircleDashed className="text-xl" />
-          </div>
+          ) : (
+            <button
+              onClick={handleFollowUser}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-medium"
+            >
+              Follow
+            </button>
+          )}
+          <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-medium">
+            <FiMessageSquare size={16} />
+            {isRequser ? "Tools" : "Message"}
+          </button>
+          <button className="p-2 rounded-full hover:bg-gray-100">
+            <TbCircleDashed size={20} />
+          </button>
+        </div>
+      </div>
 
-          <div className="flex space-x-10">
-            <div>
-              <span className="font-semibold mr-2">
-                {post?.reqUserPost?.length || 0}
-              </span>
-              <span>posts</span>
-            </div>
-
-            <div>
-              <span className="font-semibold mr-2">
-                {user?.follower?.length}
-              </span>
-              <span>followers</span>
-            </div>
-            <div>
-              <span className="font-semibold mr-2">
-                {user?.following?.length}
-              </span>
-              <span>following</span>
-            </div>
-          </div>
-          <div>
-            <p className="font-semibold">{user?.name}</p>
-            <p className="font-thin text-sm">{user?.bio}</p>
-          </div>
+      {/* Stats Bar */}
+      <div className="border-t px-6 py-4 flex justify-around text-center">
+        <div>
+          <span className="font-semibold text-lg">
+            {post?.reqUserPost?.length || 0}
+          </span>
+          <p className="text-gray-600 text-sm">Posts</p>
+        </div>
+        <div>
+          <span className="font-semibold text-lg">
+            {user?.follower?.length || 0}
+          </span>
+          <p className="text-gray-600 text-sm">Followers</p>
+        </div>
+        <div>
+          <span className="font-semibold text-lg">
+            {user?.following?.length || 0}
+          </span>
+          <p className="text-gray-600 text-sm">Following</p>
         </div>
       </div>
     </div>

@@ -12,20 +12,33 @@ import {
   updateResource,
   deleteResource
 } from '../../Redux/LearningPlan/Action';
-import { Button, Modal, Form, Input, DatePicker, Checkbox, List, Card, Space, message, Collapse, Tag, Alert, Spin } from 'antd';
+import { 
+  Button, 
+  Modal, 
+  Form, 
+  Input, 
+  DatePicker, 
+  Checkbox, 
+  Tag, 
+  Space, 
+  message, 
+  Spin,
+  Alert,
+  Divider
+} from 'antd';
 import { 
   PlusOutlined, 
   EditOutlined, 
   DeleteOutlined, 
   LinkOutlined,
   FileAddOutlined,
-  BookOutlined
+  BookOutlined,
+  CalendarOutlined,
+  CheckCircleOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 import "./LearningPlan.css";
 
-
-const { Panel } = Collapse;
 const { TextArea } = Input;
 
 const LearningPlan = () => {
@@ -37,7 +50,6 @@ const LearningPlan = () => {
   const [resourceForm] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activePanelKey, setActivePanelKey] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planModal, setPlanModal] = useState({
     visible: false,
@@ -282,28 +294,22 @@ const LearningPlan = () => {
     }
   };
 
-  const handlePanelChange = (key) => {
-    setActivePanelKey(key);
-    if (key.length > 0) {
-      const planId = key[0];
-      const selected = learningPlan.plans.find(plan => plan.id === planId);
-      setSelectedPlan(selected);
-    } else {
-      setSelectedPlan(null);
-    }
+  const getCompletionPercentage = (topics) => {
+    if (!topics || topics.length === 0) return 0;
+    const completed = topics.filter(t => t.completed).length;
+    return Math.round((completed / topics.length) * 100);
   };
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="text-center py-10">
+      <div className="learning-plan-container">
+        <div className="empty-state">
           <Alert message="Error" description={error} type="error" showIcon />
           <Button 
-            type="primary" 
+            className="primary-button mt-4"
             onClick={() => window.location.reload()}
-            className="mt-4"
           >
-            Retry
+            Try Again
           </Button>
         </div>
       </div>
@@ -312,100 +318,105 @@ const LearningPlan = () => {
 
   if (loading) {
     return (
-      <div className="p-8">
-        <div className="text-center py-10">
+      <div className="learning-plan-container">
+        <div className="empty-state">
           <Spin size="large" />
-          <p>Loading your learning plans...</p>
+          <p className="text-gray-500 mt-4">Loading your learning plans...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold flex items-center">
-          <BookOutlined className="mr-2" /> My Learning Plans
+    <div className="learning-plan-container">
+      <div className="plan-header">
+        <h1 className="header-title">
+          <BookOutlined style={{ color: '#7c3aed' }} /> Learning Plans
         </h1>
         <Button
-          type="primary"
+          className="primary-button"
           icon={<PlusOutlined />}
           onClick={() => showPlanModal()}
         >
-          New Learning Plan
+          New Learning Plans
         </Button>
       </div>
 
       {learningPlan.plans?.length === 0 ? (
-        <div className="text-center py-10 border-2 border-dashed rounded-lg">
-          <FileAddOutlined className="text-4xl text-gray-400 mb-4" />
-          <p className="text-lg text-gray-600">No learning plans yet</p>
-          <Button 
-            type="primary" 
-            className="mt-4"
+        <div className="empty-state">
+          <FileAddOutlined className="empty-state-icon" style={{ fontSize: '3rem', color: '#7c3aed' }} />
+          <p className="text-gray-500 text-lg mb-4">No learning plans created yet</p>
+          <Button
+            className="primary-button"
             onClick={() => showPlanModal()}
           >
-            Create Your First Plan
+            Create First Plan
+
           </Button>
         </div>
       ) : (
-        <>
-          <Collapse 
-            activeKey={activePanelKey}
-            onChange={handlePanelChange}
-            className="mb-6"
-          >
-            {learningPlan.plans?.map((plan) => (
-              <Panel 
-                header={
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">{plan.title}</span>
-                    <div>
-                      <Tag color="blue">{plan.topics?.length || 0} Topics</Tag>
-                    </div>
+        <div className="plan-grid">
+          {learningPlan.plans?.map((plan) => (
+            <div key={plan.id} className="plan-card">
+              <div className="card-header">
+                <div className="flex items-center gap-3">
+                  <CheckCircleOutlined 
+                    style={{ 
+                      fontSize: '1.5rem', 
+                      color: getCompletionPercentage(plan.topics) === 100 ? '#7c3aed' : '#e0e0e0' 
+                    }} 
+                  />
+                  <h3 className="plan-title">{plan.title}</h3>
+                </div>
+                <Space>
+                  <Button
+                    shape="circle"
+                    icon={<PlusOutlined />}
+                    onClick={() => showTopicModal('create', null, plan.id)}
+                  />
+                  <Button
+                    shape="circle"
+                    icon={<EditOutlined />}
+                    onClick={() => showPlanModal('edit', plan)}
+                  />
+                  <Button
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    danger
+                    onClick={() => handleDeletePlan(plan.id)}
+                  />
+                </Space>
+              </div>
+
+              <div className="card-content">
+                {plan.description && (
+                  <p className="plan-description">{plan.description}</p>
+                )}
+
+                <div className="progress-container">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ width: `${getCompletionPercentage(plan.topics)}%` }}
+                    />
                   </div>
-                }
-                key={plan.id.toString()}
-                extra={
-                  <Space>
-                    <Button
-                      size="small"
-                      icon={<PlusOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        showTopicModal('create', null, plan.id);
-                      }}
-                    />
-                    <Button
-                      size="small"
-                      icon={<EditOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        showPlanModal('edit', plan);
-                      }}
-                    />
-                    <Button
-                      size="small"
-                      icon={<DeleteOutlined />}
-                      danger
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeletePlan(plan.id);
-                      }}
-                    />
-                  </Space>
-                }
-              >
-                <div className="mb-4">
-                  <p className="text-gray-700">{plan.description}</p>
+                  <div className="flex justify-between text-sm mt-2">
+                    <span className="text-gray-600">
+                      {getCompletionPercentage(plan.topics)}% Complete
+                    </span>
+                    <span className="text-gray-600">
+                      {plan.topics?.filter(t => t.completed).length} of {plan.topics?.length} topics
+                    </span>
+                  </div>
                 </div>
 
-                <div className="mt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-semibold text-lg">Topics</h3>
+                <Divider className="custom-divider" />
+
+                <div className="topic-section">
+                  <div className="section-header">
+                    <h4 className="section-title">Topics</h4>
                     <Button
-                      type="primary"
-                      size="small"
+                      className="secondary-button"
                       icon={<PlusOutlined />}
                       onClick={() => showTopicModal('create', null, plan.id)}
                     >
@@ -414,118 +425,95 @@ const LearningPlan = () => {
                   </div>
 
                   {plan.topics?.length > 0 ? (
-                    <List
-                      dataSource={plan.topics}
-                      renderItem={(topic) => (
-                        <List.Item className="!px-0">
-                          <Card
-                            size="small"
-                            className="w-full"
-                            title={
-                              <div className="flex items-center">
-                                <Checkbox 
-                                  checked={topic.completed}
-                                  className="mr-2"
-                                  onChange={(e) => {
-                                    dispatch(updateTopic({
-                                      jwt: token,
-                                      topicId: topic.id,
-                                      topicData: {
-                                        ...topic,
-                                        completed: e.target.checked
-                                      }
-                                    }));
-                                  }}
-                                />
-                                <span className={topic.completed ? "line-through" : ""}>
+                    <div className="topic-list">
+                      {plan.topics.map((topic) => (
+                        <div key={topic.id} className="topic-item">
+                          <div className="topic-main">
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                checked={topic.completed}
+                                onChange={(e) => dispatch(updateTopic({
+                                  jwt: token,
+                                  topicId: topic.id,
+                                  topicData: {
+                                    ...topic,
+                                    completed: e.target.checked
+                                  }
+                                }))}
+                              />
+                              <div className="topic-content">
+                                <h4 className={`topic-title ${topic.completed ? 'completed' : ''}`}>
                                   {topic.title}
-                                </span>
+                                </h4>
+                                {topic.description && (
+                                  <p className="topic-description">{topic.description}</p>
+                                )}
                               </div>
-                            }
-                            extra={
-                              <Space>
-                                <Button
-                                  size="small"
-                                  icon={<PlusOutlined />}
-                                  onClick={() => showResourceModal('create', null, topic.id)}
-                                />
-                                <Button
-                                  size="small"
-                                  icon={<EditOutlined />}
-                                  onClick={() => showTopicModal('edit', topic, plan.id)}
-                                />
-                                <Button
-                                  size="small"
-                                  icon={<DeleteOutlined />}
-                                  danger
-                                  onClick={() => handleDeleteTopic(topic.id)}
-                                />
-                              </Space>
-                            }
-                          >
-                            <div className="mb-2">
-                              <p className="text-gray-600">{topic.description}</p>
-                              {topic.targetCompletionDate && (
-                                <div className="mt-2">
-                                  <Tag color="orange">
-                                    Target: {new Date(topic.targetCompletionDate).toLocaleDateString()}
-                                  </Tag>
-                                  {new Date(topic.targetCompletionDate) < new Date() && !topic.completed && (
-                                    <Tag color="red" className="ml-2">Overdue</Tag>
-                                  )}
-                                </div>
-                              )}
                             </div>
+                            <div className="topic-actions">
+                              <Button
+                                size="small"
+                                icon={<EditOutlined />}
+                                onClick={() => showTopicModal('edit', topic, plan.id)}
+                              />
+                              <Button
+                                size="small"
+                                icon={<DeleteOutlined />}
+                                danger
+                                onClick={() => handleDeleteTopic(topic.id)}
+                              />
+                            </div>
+                          </div>
 
-                            {topic.resources?.length > 0 && (
-                              <div className="mt-4">
-                                <h4 className="font-medium mb-2">Resources:</h4>
-                                <List
-                                  size="small"
-                                  dataSource={topic.resources}
-                                  renderItem={(resource) => (
-                                    <List.Item className="!px-0">
-                                      <div className="flex justify-between items-center w-full">
-                                        <div className="flex items-center">
-                                          <LinkOutlined className="mr-2 text-blue-500" />
-                                          <a 
-                                            href={resource.url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="text-blue-500"
-                                          >
-                                            {resource.description || resource.url}
-                                          </a>
-                                        </div>
-                                        <Space>
-                                          <Button
-                                            size="small"
-                                            icon={<EditOutlined />}
-                                            onClick={() => showResourceModal('edit', resource, topic.id)}
-                                          />
-                                          <Button
-                                            size="small"
-                                            icon={<DeleteOutlined />}
-                                            danger
-                                            onClick={() => handleDeleteResource(resource.id)}
-                                          />
-                                        </Space>
-                                      </div>
-                                    </List.Item>
-                                  )}
-                                />
-                              </div>
+                          <div className="topic-meta">
+                            {topic.targetCompletionDate && (
+                              <Tag icon={<CalendarOutlined />} className="status-tag tag-purple">
+                                {new Date(topic.targetCompletionDate).toLocaleDateString()}
+                              </Tag>
                             )}
-                          </Card>
-                        </List.Item>
-                      )}
-                    />
+                            {!topic.completed && new Date(topic.targetCompletionDate) < new Date() && (
+                              <Tag className="status-tag tag-red">Overdue</Tag>
+                            )}
+                          </div>
+
+                          {topic.resources?.length > 0 && (
+                            <div className="resource-list">
+                              {topic.resources.map((resource) => (
+                                <div key={resource.id} className="resource-item">
+                                  <a
+                                    href={resource.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="resource-link"
+                                  >
+                                    <LinkOutlined className="mr-2" />
+                                    {resource.description || resource.url}
+                                  </a>
+                                  <Space>
+                                    <Button
+                                      size="small"
+                                      icon={<EditOutlined />}
+                                      onClick={() => showResourceModal('edit', resource, topic.id)}
+                                    />
+                                    <Button
+                                      size="small"
+                                      icon={<DeleteOutlined />}
+                                      danger
+                                      onClick={() => handleDeleteResource(resource.id)}
+                                    />
+                                  </Space>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   ) : (
-                    <div className="text-center py-4 border-2 border-dashed rounded-lg">
-                      <p className="text-gray-500">No topics yet</p>
+                    <div className="empty-state-small">
+                      <p className="text-gray-500">No topics added yet</p>
                       <Button
-                        type="dashed"
-                        className="mt-2"
+                        type="text"
                         icon={<PlusOutlined />}
                         onClick={() => showTopicModal('create', null, plan.id)}
                       >
@@ -534,92 +522,28 @@ const LearningPlan = () => {
                     </div>
                   )}
                 </div>
-              </Panel>
-            ))}
-          </Collapse>
-
-          {selectedPlan && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">{selectedPlan.title}</h2>
-                <Space>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => showTopicModal('create', null, selectedPlan.id)}
-                  >
-                    Add Topic
-                  </Button>
-                  <Button
-                    icon={<EditOutlined />}
-                    onClick={() => showPlanModal('edit', selectedPlan)}
-                  >
-                    Edit Plan
-                  </Button>
-                </Space>
-              </div>
-              <p className="text-gray-700 mb-4">{selectedPlan.description}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <h3 className="font-medium mb-2">Completion Progress</h3>
-                  {selectedPlan.topics?.length > 0 ? (
-                    <>
-                      <div className="mb-2">
-                        <span className="text-gray-600">
-                          {selectedPlan.topics.filter(t => t.completed).length} of {selectedPlan.topics.length} topics completed
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div 
-                          className="bg-blue-600 h-2.5 rounded-full" 
-                          style={{ 
-                            width: `${(selectedPlan.topics.filter(t => t.completed).length / selectedPlan.topics.length) * 100}%` 
-                          }}
-                        ></div>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-gray-500">No topics to track progress</p>
-                  )}
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow">
-                  <h3 className="font-medium mb-2">Quick Actions</h3>
-                  <Space>
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={() => showTopicModal('create', null, selectedPlan.id)}
-                    >
-                      Add Topic
-                    </Button>
-                    <Button
-                      icon={<LinkOutlined />}
-                      onClick={() => {
-                        if (selectedPlan.topics?.length > 0) {
-                          showResourceModal('create', null, selectedPlan.topics[0].id);
-                        }
-                      }}
-                      disabled={!selectedPlan.topics || selectedPlan.topics.length === 0}
-                    >
-                      Add Resource
-                    </Button>
-                  </Space>
-                </div>
               </div>
             </div>
-          )}
-        </>
+          ))}
+        </div>
       )}
 
+      {/* Plan Modal */}
       <Modal
-        title={planModal.mode === 'create' ? 'Create Learning Plan' : 'Edit Learning Plan'}
+        title={planModal.mode === 'create' ? 'New Learning Path' : 'Edit Learning Path'}
         visible={planModal.visible}
         onCancel={() => setPlanModal({...planModal, visible: false})}
         onOk={() => planForm.submit()}
         destroyOnClose
-        width={600}
+        className="modal-form"
+        footer={[
+          <Button key="back" onClick={() => setPlanModal({...planModal, visible: false})}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => planForm.submit()}>
+            {planModal.mode === 'create' ? 'Create' : 'Update'}
+          </Button>,
+        ]}
       >
         <Form 
           form={planForm} 
@@ -628,7 +552,7 @@ const LearningPlan = () => {
         >
           <Form.Item 
             name="title" 
-            label="Plan Title" 
+            label="Plan Title"
             rules={[
               { required: true, message: 'Please input the plan title!' },
               { max: 100, message: 'Title must be less than 100 characters' }
@@ -641,18 +565,27 @@ const LearningPlan = () => {
             label="Description"
             rules={[{ max: 500, message: 'Description must be less than 500 characters' }]}
           >
-            <TextArea rows={4} placeholder="Describe what you want to learn" />
+            <TextArea rows={4} placeholder="Describe your learning goals" />
           </Form.Item>
         </Form>
       </Modal>
 
+      {/* Topic Modal */}
       <Modal
-        title={topicModal.mode === 'create' ? 'Add New Topic' : 'Edit Topic'}
+        title={topicModal.mode === 'create' ? 'New Topic' : 'Edit Topic'}
         visible={topicModal.visible}
         onCancel={() => setTopicModal({...topicModal, visible: false})}
         onOk={() => topicForm.submit()}
         destroyOnClose
-        width={600}
+        className="modal-form"
+        footer={[
+          <Button key="back" onClick={() => setTopicModal({...topicModal, visible: false})}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => topicForm.submit()}>
+            {topicModal.mode === 'create' ? 'Create' : 'Update'}
+          </Button>,
+        ]}
       >
         <Form 
           form={topicForm} 
@@ -661,7 +594,7 @@ const LearningPlan = () => {
         >
           <Form.Item 
             name="title" 
-            label="Topic Title" 
+            label="Topic Title"
             rules={[
               { required: true, message: 'Please input the topic title!' },
               { max: 100, message: 'Title must be less than 100 characters' }
@@ -674,12 +607,13 @@ const LearningPlan = () => {
             label="Description"
             rules={[{ max: 500, message: 'Description must be less than 500 characters' }]}
           >
-            <TextArea rows={3} placeholder="Describe what this topic covers" />
+            <TextArea rows={3} placeholder="Describe the topic content" />
           </Form.Item>
-          <Form.Item name="targetCompletionDate" label="Target Completion Date">
+          <Form.Item name="targetCompletionDate" label="Target Date">
             <DatePicker 
               style={{ width: '100%' }} 
               placeholder="Select target date"
+              suffixIcon={<CalendarOutlined />}
             />
           </Form.Item>
           <Form.Item name="completed" valuePropName="checked">
@@ -688,13 +622,22 @@ const LearningPlan = () => {
         </Form>
       </Modal>
 
+      {/* Resource Modal */}
       <Modal
-        title={resourceModal.mode === 'create' ? 'Add New Resource' : 'Edit Resource'}
+        title={resourceModal.mode === 'create' ? 'New Resource' : 'Edit Resource'}
         visible={resourceModal.visible}
         onCancel={() => setResourceModal({...resourceModal, visible: false})}
         onOk={() => resourceForm.submit()}
         destroyOnClose
-        width={600}
+        className="modal-form"
+        footer={[
+          <Button key="back" onClick={() => setResourceModal({...resourceModal, visible: false})}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => resourceForm.submit()}>
+            {resourceModal.mode === 'create' ? 'Add' : 'Update'}
+          </Button>,
+        ]}
       >
         <Form 
           form={resourceForm} 
@@ -703,7 +646,7 @@ const LearningPlan = () => {
         >
           <Form.Item 
             name="url" 
-            label="Resource URL" 
+            label="Resource URL"
             rules={[
               { required: true, message: 'Please input the resource URL!' },
               { type: 'url', message: 'Please enter a valid URL!' }

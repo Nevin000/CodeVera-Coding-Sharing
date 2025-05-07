@@ -25,17 +25,21 @@ import {
 } from "@ant-design/icons";
 import "./LearningProgress.css"; // 👈 Make sure this CSS file is created
 
+
+
 const { Option } = Select;
 
 const LearningProgress = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
 
+
   const { updates } = useSelector((store) => store.learningProgress);
 
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+
 
   useEffect(() => {
     dispatch(getProgressUpdates(token));
@@ -53,6 +57,8 @@ const LearningProgress = () => {
     setIsModalOpen(false);
     setEditing(null);
   };
+
+  // LearningProgress component manages user learning progress updates
 
   const handleTemplateChange = (value) => {
     if (value === "tutorial") {

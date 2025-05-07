@@ -1,4 +1,3 @@
-// HomePage.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +38,7 @@ const HomePage = () => {
       userIds: [userIds].join(","),
       jwt: token,
     };
+
     if (userIds.length > 0) {
       dispatch(findUserPost(data));
       dispatch(findByUserIdsAction(data));
@@ -48,12 +48,13 @@ const HomePage = () => {
   const storyUsers = hasStory(user.userByIds);
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10">
-      <div className="flex w-[90%] mx-auto gap-8">
-        {/* Left - Stories and Posts */}
-        <div className="flex flex-col w-[60%]">
+    <div className="homepage-container">
+      <div className="mt-10 flex w-full justify-center">
+        {/* Main Content */}
+        <div className="flex flex-col w-full max-w-2xl px-4 md:px-10 items-center">
+          {/* Stories Section */}
           {storyUsers.length > 0 && (
-            <div className="flex space-x-3 bg-white p-4 rounded-md shadow-sm mb-6">
+            <div className="flex space-x-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100 w-full mb-6 overflow-x-auto">
               {storyUsers.map((item, index) => (
                 <StoryCircle
                   key={index}
@@ -67,14 +68,16 @@ const HomePage = () => {
               ))}
             </div>
           )}
-          <div className="space-y-6">
-            {post.userPost?.length > 0 &&
-              post?.userPost?.map((item) => (
+
+          {/* Posts Section */}
+          <div className="w-full space-y-6">
+            {post.userPost?.length > 0 ? (
+              post.userPost.map((item) => (
                 <PostCard
+                  key={item.id}
                   userProfileImage={
-                    item.user.userImage
-                      ? item.user.userImage
-                      : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                    item.user.userImage ||
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                   }
                   username={item?.user?.username}
                   location={item?.location}
@@ -82,13 +85,23 @@ const HomePage = () => {
                   createdAt={timeDifference(item?.createdAt)}
                   postId={item?.id}
                   post={item}
+                  likes={item.likedByUsers || []}
+                  comments={item.comments || []}
+                  caption={item.caption}
                 />
-              ))}
+              ))
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-gray-500">
+                  No posts to show. Follow more people to see their posts.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right - Suggestions */}
-        <div className="w-[30%]">
+        {/* Right Navbar */}
+        <div className="hidden lg:block w-80 pr-4 pl-6">
           <HomeRight suggestedUser={suggestedUser} />
         </div>
       </div>

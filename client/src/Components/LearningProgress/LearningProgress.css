@@ -1,68 +1,254 @@
 /* Container and Typography */
 .p-6 {
-    padding: 2rem;
-    background-color: #fafafa;
+  padding: 2.5rem;
+  background-color: #f7f9fc; /* Light, neutral background for a clean look */
+  min-height: 100vh; /* Full-height container for better layout */
+}
+
+/* Typography */
+.text-xl {
+  font-size: 1.5rem; /* Slightly larger for prominence */
+  color: #1a202c; /* Darker text for readability */
+}
+
+.font-semibold {
+  font-weight: 700; /* Bolder for headers */
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem; /* Increased spacing for clarity */
+}
+
+/* Flex container for header */
+.flex.justify-between.items-center {
+  align-items: center;
+  gap: 1rem; /* Consistent spacing between elements */
+}
+
+/* Button Styling */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #101bb9, #101bb9); /* Vibrant green gradient for "Add Update" */
+  border: none;
+  border-radius: 0.75rem; /* Softer, modern radius */
+  font-weight: 600;
+  padding: 0.5rem 1.75rem; /* Slightly wider padding for prominence */
+  height: 44px; /* Taller button for emphasis */
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for depth */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; /* Smooth hover animation */
+  font-size: 1rem; /* Larger text for readability */
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-3px); /* More pronounced lift effect */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+  background: linear-gradient(135deg, #101bb9, #101bb9); /* Lighter green on hover */
+}
+
+/* Small buttons (Edit/Delete) */
+.ant-btn-sm {
+  border-radius: 50%; /* Circular buttons as in the image */
+  width: 32px; /* Fixed width for circular shape */
+  height: 32px; /* Fixed height for circular shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none; /* Remove border for cleaner look */
+  background: #e5e7eb; /* Light gray background */
+  color: #4a5568; /* Neutral icon color */
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  margin-left: 0.5rem; /* Space between buttons */
+}
+
+.ant-btn-sm:hover {
+  transform: scale(1.1); /* Slight scale on hover */
+  background: #d1d5db; /* Darker gray on hover */
+  color: #2d3748;
+}
+
+/* Edit button specific */
+.ant-btn-sm:not(.ant-btn-danger) {
+  background: #d1fae5; /* Light green background for Edit */
+  color: #101bb9; /* Green icon color */
+}
+
+.ant-btn-sm:not(.ant-btn-danger):hover {
+  background: #a7f3d0; /* Slightly darker green on hover */
+  color: #101bb9;
+}
+
+/* Delete button specific */
+.ant-btn-danger {
+  background: #fee2e2; /* Light red background for Delete */
+  color: #ef4444; /* Red icon color */
+}
+
+.ant-btn-danger:hover {
+  background: #fecaca; /* Slightly darker red on hover */
+  color: #dc2626;
+}
+
+/* Modal Styling */
+.ant-modal-content {
+  border-radius: 1.25rem; /* Slightly larger radius for a modern feel */
+  padding: 2.5rem; /* More padding for spaciousness */
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15); /* Deeper shadow for prominence */
+  border: 1px solid #e6f0fa; /* Subtle border for definition */
+}
+
+.ant-modal-header {
+  border-bottom: none; /* Clean look without divider */
+  padding-bottom: 0; /* Remove extra spacing */
+}
+
+.ant-modal-title {
+  font-size: 1.375rem; /* Larger title for emphasis */
+  font-weight: 700; /* Bolder for clarity */
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space for emoji icons */
+}
+
+/* Modal Buttons */
+.ant-modal-footer .ant-btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  height: 38px;
+}
+
+.ant-modal-footer .ant-btn-primary {
+  background: linear-gradient(135deg, #101bb9, #101bb9); /* Match button gradient */
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ant-modal-footer .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #101bb9, #101bb9);
+  transform: translateY(-2px);
+}
+
+.ant-modal-footer .ant-btn-default {
+  border: 1px solid #cbd5e0;
+  color: #4a5568;
+}
+
+.ant-modal-footer .ant-btn-default:hover {
+  background: #f7f9fc;
+  color: #2d3748;
+}
+
+/* Inputs and Select */
+.ant-input,
+.ant-textarea,
+.ant-select-selector {
+  border-radius: 0.5rem;
+  background: #f9fafb; /* Light gray for inputs to stand out */
+  border: 1px solid #cbd5e0; /* Subtle border */
+  padding: 0.75rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ant-input:focus,
+.ant-textarea:focus,
+.ant-select-selector:focus {
+  border-color: #101bb9; /* Green focus state to match theme */
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); /* Subtle focus ring */
+}
+
+.ant-select-selector {
+  height: 42px !important; /* Slightly taller for better alignment */
+}
+
+/* Textarea specific */
+.ant-textarea {
+  resize: vertical; /* Allow vertical resize only */
+  min-height: 120px; /* Taller textarea for detailed input */
+}
+
+/* List Styling */
+.ant-list-item {
+  background: #ffffff;
+  border-radius: 1rem; /* More rounded for modern look */
+  padding: 1.5rem; /* Increased padding for spaciousness */
+  margin-bottom: 1rem;
+  border: none; /* Remove default border */
+  border-left: 4px solid #101bb9; /* Green left border for progress indication */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Lighter shadow for depth */
+  transition: background 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.ant-list-item:hover {
+  background: #f9fafb; /* Light gray background on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly deeper shadow on hover */
+}
+
+.ant-list-item-meta-title {
+  font-size: 1.25rem; /* Larger title for emphasis */
+  font-weight: 700; /* Bolder for clarity */
+  color: #111827; /* Darker color for contrast */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space for emoji/icon */
+}
+
+/* Add a pseudo-element for an emoji/icon before the title */
+.ant-list-item-meta-title::before {
+  content: "📚"; /* Default emoji for tutorial (can be dynamic in JSX) */
+  font-size: 1.25rem;
+}
+
+.ant-list-item-meta-description {
+  font-size: 0.875rem;
+  color: #6b7280; /* Lighter gray for description */
+  line-height: 1.6; /* Better readability */
+}
+
+/* Style placeholder-like text (e.g., [topic]) */
+.ant-list-item-meta-description span {
+  font-style: italic;
+  color: #9ca3af; /* Faded gray for placeholder text */
+}
+
+/* Form Labels */
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 0.875rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .p-6 {
+    padding: 1.5rem; /* Reduced padding on mobile */
   }
-  
+
   .text-xl {
-    font-size: 1.25rem;
+    font-size: 1.25rem; /* Smaller header on mobile */
   }
-  
-  .font-semibold {
-    font-weight: 600;
-  }
-  
-  .mb-4 {
-    margin-bottom: 1rem;
-  }
-  
-  /* Button Styling */
+
   .ant-btn-primary {
-    background: linear-gradient(to right, #f09433, #e6683c, #dc2743);
-    border: none;
-    border-radius: 1.5rem;
-    font-weight: bold;
-    padding: 0 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    height: 40px;
   }
-  
-  .ant-btn-primary:hover {
-    opacity: 0.9;
-  }
-  
-  /* Modal */
+
   .ant-modal-content {
-    border-radius: 1.25rem;
-    padding: 1.5rem;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    padding: 1.75rem;
   }
-  
-  /* Inputs */
-  .ant-input,
-  .ant-textarea,
-  .ant-select-selector {
-    border-radius: 1rem;
-    background: #f9f9f9;
-    border: 1px solid #dbdbdb;
+
+  .ant-modal-title {
+    font-size: 1.125rem;
   }
-  
-  /* List Styling */
+
   .ant-list-item {
-    background: #fff;
-    border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    padding: 1rem; /* Reduced padding on mobile */
   }
-  
+
   .ant-list-item-meta-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #262626;
+    font-size: 1.125rem; /* Smaller title on mobile */
   }
-  
-  .ant-list-item-meta-description {
-    font-size: 14px;
-    color: #555;
-  }
-  
+}
