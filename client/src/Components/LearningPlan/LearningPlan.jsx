@@ -351,7 +351,6 @@ const LearningPlan = () => {
             onClick={() => showPlanModal()}
           >
             Create First Plan
-
           </Button>
         </div>
       ) : (
@@ -451,6 +450,11 @@ const LearningPlan = () => {
                               </div>
                             </div>
                             <div className="topic-actions">
+                              <Button
+                                size="small"
+                                icon={<PlusOutlined />}
+                                onClick={() => showResourceModal('create', null, topic.id)}
+                              />
                               <Button
                                 size="small"
                                 icon={<EditOutlined />}
