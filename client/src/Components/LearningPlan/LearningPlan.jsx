@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  createLearningPlan, 
-  getLearningPlans, 
-  updateLearningPlan, 
+import {
+  createLearningPlan,
+  getLearningPlans,
+  updateLearningPlan,
   deleteLearningPlan,
   addTopicToPlan,
   updateTopic,
@@ -12,24 +12,24 @@ import {
   updateResource,
   deleteResource
 } from '../../Redux/LearningPlan/Action';
-import { 
-  Button, 
-  Modal, 
-  Form, 
-  Input, 
-  DatePicker, 
-  Checkbox, 
-  Tag, 
-  Space, 
-  message, 
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  Checkbox,
+  Tag,
+  Space,
+  message,
   Spin,
   Alert,
-  Divider
+  Collapse
 } from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
   LinkOutlined,
   FileAddOutlined,
   BookOutlined,
@@ -39,6 +39,7 @@ import {
 import moment from 'moment';
 import "./LearningPlan.css";
 
+const { Panel } = Collapse;
 const { TextArea } = Input;
 
 const LearningPlan = () => {
@@ -50,7 +51,6 @@ const LearningPlan = () => {
   const [resourceForm] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState(null);
   const [planModal, setPlanModal] = useState({
     visible: false,
     mode: 'create',
@@ -84,26 +84,26 @@ const LearningPlan = () => {
     };
 
     if (token) fetchData();
-    
+
     return () => {
       isMounted = false;
     };
   }, [dispatch, token]);
-
+  //handle create plan
   const handleCreatePlan = async (values) => {
     try {
       await dispatch(createLearningPlan({
         jwt: token,
         planData: values
       }));
-      setPlanModal({...planModal, visible: false});
+      setPlanModal({ ...planModal, visible: false });
       planForm.resetFields();
       message.success('Learning plan created successfully');
     } catch (err) {
       message.error(err.message || 'Failed to create learning plan');
     }
   };
-
+  //handle update plan
   const handleUpdatePlan = async (values) => {
     try {
       await dispatch(updateLearningPlan({
@@ -111,14 +111,14 @@ const LearningPlan = () => {
         planId: planModal.currentPlan.id,
         planData: values
       }));
-      setPlanModal({...planModal, visible: false});
+      setPlanModal({ ...planModal, visible: false });
       planForm.resetFields();
       message.success('Learning plan updated successfully');
     } catch (err) {
       message.error(err.message || 'Failed to update learning plan');
     }
   };
-
+  //handle delete plan
   const handleDeletePlan = (planId) => {
     Modal.confirm({
       title: 'Delete Learning Plan',
@@ -139,7 +139,7 @@ const LearningPlan = () => {
       }
     });
   };
-
+  //handle create milestone
   const handleCreateTopic = async (values) => {
     try {
       await dispatch(addTopicToPlan({
@@ -150,14 +150,14 @@ const LearningPlan = () => {
           targetCompletionDate: values.targetCompletionDate?.format('YYYY-MM-DD') || null
         }
       }));
-      setTopicModal({...topicModal, visible: false});
+      setTopicModal({ ...topicModal, visible: false });
       topicForm.resetFields();
-      message.success('Topic added successfully');
+      message.success('Milestone added successfully');
     } catch (err) {
-      message.error(err.message || 'Failed to add topic');
+      message.error(err.message || 'Failed to add milestone');
     }
   };
-
+  //handle update milestone
   const handleUpdateTopic = async (values) => {
     try {
       await dispatch(updateTopic({
@@ -168,18 +168,18 @@ const LearningPlan = () => {
           targetCompletionDate: values.targetCompletionDate?.format('YYYY-MM-DD') || null
         }
       }));
-      setTopicModal({...topicModal, visible: false});
+      setTopicModal({ ...topicModal, visible: false });
       topicForm.resetFields();
-      message.success('Topic updated successfully');
+      message.success('Milestone updated successfully');
     } catch (err) {
-      message.error(err.message || 'Failed to update topic');
+      message.error(err.message || 'Failed to update milestone');
     }
   };
-
+  //handle delete milestone
   const handleDeleteTopic = (topicId) => {
     Modal.confirm({
-      title: 'Delete Topic',
-      content: 'Are you sure you want to delete this topic?',
+      title: 'Delete Milestone',
+      content: 'Are you sure you want to delete this milestone?',
       okText: 'Delete',
       okType: 'danger',
       cancelText: 'Cancel',
@@ -189,14 +189,14 @@ const LearningPlan = () => {
             jwt: token,
             topicId
           }));
-          message.success('Topic deleted successfully');
+          message.success('Milestone deleted successfully');
         } catch (err) {
-          message.error(err.message || 'Failed to delete topic');
+          message.error(err.message || 'Failed to delete milestone');
         }
       }
     });
   };
-
+  //handle create resource
   const handleCreateResource = async (values) => {
     try {
       await dispatch(addResourceToTopic({
@@ -204,14 +204,14 @@ const LearningPlan = () => {
         topicId: resourceModal.topicId,
         resourceData: values
       }));
-      setResourceModal({...resourceModal, visible: false});
+      setResourceModal({ ...resourceModal, visible: false });
       resourceForm.resetFields();
       message.success('Resource added successfully');
     } catch (err) {
       message.error(err.message || 'Failed to add resource');
     }
   };
-
+  //handle update resource
   const handleUpdateResource = async (values) => {
     try {
       await dispatch(updateResource({
@@ -219,14 +219,14 @@ const LearningPlan = () => {
         resourceId: resourceModal.currentResource.id,
         resourceData: values
       }));
-      setResourceModal({...resourceModal, visible: false});
+      setResourceModal({ ...resourceModal, visible: false });
       resourceForm.resetFields();
       message.success('Resource updated successfully');
     } catch (err) {
       message.error(err.message || 'Failed to update resource');
     }
   };
-
+  //handle delete resource
   const handleDeleteResource = (resourceId) => {
     Modal.confirm({
       title: 'Delete Resource',
@@ -278,7 +278,7 @@ const LearningPlan = () => {
       });
     }
   };
-
+  //display resource modal
   const showResourceModal = (mode = 'create', resource = null, topicId = null) => {
     setResourceModal({
       visible: true,
@@ -305,7 +305,7 @@ const LearningPlan = () => {
       <div className="learning-plan-container">
         <div className="empty-state">
           <Alert message="Error" description={error} type="error" showIcon />
-          <Button 
+          <Button
             className="primary-button mt-4"
             onClick={() => window.location.reload()}
           >
@@ -338,7 +338,7 @@ const LearningPlan = () => {
           icon={<PlusOutlined />}
           onClick={() => showPlanModal()}
         >
-          New Learning Plans
+          New Learning Plan
         </Button>
       </div>
 
@@ -354,48 +354,59 @@ const LearningPlan = () => {
           </Button>
         </div>
       ) : (
-        <div className="plan-grid">
+        <Collapse accordion className="plan-accordion">
           {learningPlan.plans?.map((plan) => (
-            <div key={plan.id} className="plan-card">
-              <div className="card-header">
-                <div className="flex items-center gap-3">
-                  <CheckCircleOutlined 
-                    style={{ 
-                      fontSize: '1.5rem', 
-                      color: getCompletionPercentage(plan.topics) === 100 ? '#7c3aed' : '#e0e0e0' 
-                    }} 
-                  />
-                  <h3 className="plan-title">{plan.title}</h3>
+            <Panel
+              key={plan.id}
+              header={
+                <div className="plan-header-content">
+                  <div className="plan-title-container">
+                    <CheckCircleOutlined
+                      style={{
+                        fontSize: '1.5rem',
+                        color: getCompletionPercentage(plan.topics) === 100 ? '#7c3aed' : '#e0e0e0'
+                      }}
+                    />
+                    <span className="plan-title-text">{plan.title}</span>
+                  </div>
+                  <Space>
+                    <Button
+                      shape="circle"
+                      icon={<PlusOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        showTopicModal('create', null, plan.id);
+                      }}
+                    />
+                    <Button
+                      shape="circle"
+                      icon={<EditOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        showPlanModal('edit', plan);
+                      }}
+                    />
+                    <Button
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                      danger
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePlan(plan.id);
+                      }}
+                    />
+                  </Space>
                 </div>
-                <Space>
-                  <Button
-                    shape="circle"
-                    icon={<PlusOutlined />}
-                    onClick={() => showTopicModal('create', null, plan.id)}
-                  />
-                  <Button
-                    shape="circle"
-                    icon={<EditOutlined />}
-                    onClick={() => showPlanModal('edit', plan)}
-                  />
-                  <Button
-                    shape="circle"
-                    icon={<DeleteOutlined />}
-                    danger
-                    onClick={() => handleDeletePlan(plan.id)}
-                  />
-                </Space>
-              </div>
-
-              <div className="card-content">
+              }
+            >
+              <div className="plan-details">
                 {plan.description && (
                   <p className="plan-description">{plan.description}</p>
                 )}
-
                 <div className="progress-container">
                   <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
+                    <div
+                      className="progress-fill"
                       style={{ width: `${getCompletionPercentage(plan.topics)}%` }}
                     />
                   </div>
@@ -404,22 +415,20 @@ const LearningPlan = () => {
                       {getCompletionPercentage(plan.topics)}% Complete
                     </span>
                     <span className="text-gray-600">
-                      {plan.topics?.filter(t => t.completed).length} of {plan.topics?.length} topics
+                      {plan.topics?.filter(t => t.completed).length} of {plan.topics?.length} milestones
                     </span>
                   </div>
                 </div>
 
-                <Divider className="custom-divider" />
-
                 <div className="topic-section">
                   <div className="section-header">
-                    <h4 className="section-title">Topics</h4>
+                    <h4 className="section-title">Milestones</h4>
                     <Button
                       className="secondary-button"
                       icon={<PlusOutlined />}
                       onClick={() => showTopicModal('create', null, plan.id)}
                     >
-                      Add Topic
+                      Add Milestone
                     </Button>
                   </div>
 
@@ -475,7 +484,7 @@ const LearningPlan = () => {
                                 {new Date(topic.targetCompletionDate).toLocaleDateString()}
                               </Tag>
                             )}
-                            {!topic.completed && new Date(topic.targetCompletionDate) < new Date() && (
+                            {!topic.completed && topic.targetCompletionDate && new Date(topic.targetCompletionDate) < new Date() && (
                               <Tag className="status-tag tag-red">Overdue</Tag>
                             )}
                           </div>
@@ -515,33 +524,33 @@ const LearningPlan = () => {
                     </div>
                   ) : (
                     <div className="empty-state-small">
-                      <p className="text-gray-500">No topics added yet</p>
+                      <p className="text-gray-500">No milestone added yet</p>
                       <Button
                         type="text"
                         icon={<PlusOutlined />}
                         onClick={() => showTopicModal('create', null, plan.id)}
                       >
-                        Add First Topic
+                        Add First Milestone
                       </Button>
                     </div>
                   )}
                 </div>
               </div>
-            </div>
+            </Panel>
           ))}
-        </div>
+        </Collapse>
       )}
 
       {/* Plan Modal */}
       <Modal
         title={planModal.mode === 'create' ? 'New Learning Path' : 'Edit Learning Path'}
         visible={planModal.visible}
-        onCancel={() => setPlanModal({...planModal, visible: false})}
+        onCancel={() => setPlanModal({ ...planModal, visible: false })}
         onOk={() => planForm.submit()}
         destroyOnClose
         className="modal-form"
         footer={[
-          <Button key="back" onClick={() => setPlanModal({...planModal, visible: false})}>
+          <Button key="back" onClick={() => setPlanModal({ ...planModal, visible: false })}>
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={() => planForm.submit()}>
@@ -549,13 +558,13 @@ const LearningPlan = () => {
           </Button>,
         ]}
       >
-        <Form 
-          form={planForm} 
+        <Form
+          form={planForm}
           onFinish={planModal.mode === 'create' ? handleCreatePlan : handleUpdatePlan}
           layout="vertical"
         >
-          <Form.Item 
-            name="title" 
+          <Form.Item
+            name="title"
             label="Plan Title"
             rules={[
               { required: true, message: 'Please input the plan title!' },
@@ -564,8 +573,8 @@ const LearningPlan = () => {
           >
             <Input placeholder="Enter plan title" />
           </Form.Item>
-          <Form.Item 
-            name="description" 
+          <Form.Item
+            name="description"
             label="Description"
             rules={[{ max: 500, message: 'Description must be less than 500 characters' }]}
           >
@@ -576,46 +585,46 @@ const LearningPlan = () => {
 
       {/* Topic Modal */}
       <Modal
-        title={topicModal.mode === 'create' ? 'New Topic' : 'Edit Topic'}
+        title={topicModal.mode === 'create' ? 'New Milestone' : 'Edit Topic'}
         visible={topicModal.visible}
-        onCancel={() => setTopicModal({...topicModal, visible: false})}
+        onCancel={() => setTopicModal({ ...topicModal, visible: false })}
         onOk={() => topicForm.submit()}
         destroyOnClose
         className="modal-form"
         footer={[
-          <Button key="back" onClick={() => setTopicModal({...topicModal, visible: false})}>
+          <Button key="back" onClick={() => setTopicModal({ ...topicModal, visible: false })}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={() => topicForm.submit()}>
+          <Button key="submit" type="primary" onClick={() => planForm.submit()}>
             {topicModal.mode === 'create' ? 'Create' : 'Update'}
           </Button>,
         ]}
       >
-        <Form 
-          form={topicForm} 
+        <Form
+          form={topicForm}
           onFinish={topicModal.mode === 'create' ? handleCreateTopic : handleUpdateTopic}
           layout="vertical"
         >
-          <Form.Item 
-            name="title" 
-            label="Topic Title"
+          <Form.Item
+            name="title"
+            label="Title"
             rules={[
               { required: true, message: 'Please input the topic title!' },
               { max: 100, message: 'Title must be less than 100 characters' }
             ]}
           >
-            <Input placeholder="Enter topic title" />
+            <Input placeholder="Enter milestone title" />
           </Form.Item>
-          <Form.Item 
-            name="description" 
+          <Form.Item
+            name="description"
             label="Description"
             rules={[{ max: 500, message: 'Description must be less than 500 characters' }]}
           >
-            <TextArea rows={3} placeholder="Describe the topic content" />
+            <TextArea rows={3} placeholder="Describe the milestone content" />
           </Form.Item>
           <Form.Item name="targetCompletionDate" label="Target Date">
-            <DatePicker 
-              style={{ width: '100%' }} 
+            <DatePicker
+              style={{ width: '100%' }}
               placeholder="Select target date"
               suffixIcon={<CalendarOutlined />}
             />
@@ -630,12 +639,12 @@ const LearningPlan = () => {
       <Modal
         title={resourceModal.mode === 'create' ? 'New Resource' : 'Edit Resource'}
         visible={resourceModal.visible}
-        onCancel={() => setResourceModal({...resourceModal, visible: false})}
+        onCancel={() => setResourceModal({ ...resourceModal, visible: false })}
         onOk={() => resourceForm.submit()}
         destroyOnClose
         className="modal-form"
         footer={[
-          <Button key="back" onClick={() => setResourceModal({...resourceModal, visible: false})}>
+          <Button key="back" onClick={() => setResourceModal({ ...resourceModal, visible: false })}>
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={() => resourceForm.submit()}>
@@ -643,26 +652,26 @@ const LearningPlan = () => {
           </Button>,
         ]}
       >
-        <Form 
-          form={resourceForm} 
+        <Form
+          form={resourceForm}
           onFinish={resourceModal.mode === 'create' ? handleCreateResource : handleUpdateResource}
           layout="vertical"
         >
-          <Form.Item 
-            name="url" 
+          <Form.Item
+            name="url"
             label="Resource URL"
             rules={[
               { required: true, message: 'Please input the resource URL!' },
               { type: 'url', message: 'Please enter a valid URL!' }
             ]}
           >
-            <Input 
-              prefix={<LinkOutlined />} 
-              placeholder="https://example.com/resource" 
+            <Input
+              prefix={<LinkOutlined />}
+              placeholder="https://example.com/resource"
             />
           </Form.Item>
-          <Form.Item 
-            name="description" 
+          <Form.Item
+            name="description"
             label="Description (Optional)"
             rules={[{ max: 200, message: 'Description must be less than 200 characters' }]}
           >
