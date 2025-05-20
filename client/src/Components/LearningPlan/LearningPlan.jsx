@@ -139,7 +139,7 @@ const LearningPlan = () => {
       }
     });
   };
-  //handle create milestone
+
   const handleCreateTopic = async (values) => {
     try {
       await dispatch(addTopicToPlan({
