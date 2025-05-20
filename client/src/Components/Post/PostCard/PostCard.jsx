@@ -1,16 +1,14 @@
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { createNotificationAction } from "../../../Redux/Notification/Action"; 
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import {
-  BsBookmark,
-  BsBookmarkFill,
-  BsDot,
-  BsEmojiSmile,
-  BsThreeDots,
-} from "react-icons/bs";
-import { FaRegComment } from "react-icons/fa";
-import { RiSendPlaneLine } from "react-icons/ri";
+  FaRegComment,
+  FaShare,
+  FaRegBookmark,
+  FaBookmark,
+} from "react-icons/fa";
+import { BsThreeDots, BsEmojiSmile } from "react-icons/bs";
+import { createNotificationAction } from "../../../Redux/Notification/Action";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -30,8 +28,6 @@ import {
 import CommentModal from "../../Comment/CommentModal";
 import "./PostCard.css";
 import EditPostModal from "../Create/EditPostModal";
-import { IconButton } from "@chakra-ui/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const PostCard = ({
   userProfileImage,
@@ -73,13 +69,12 @@ const PostCard = ({
     };
     dispatch(createComment(data));
     setCommentContent("");
-    
-    // Create notification for comment
-    if (post.user.id !== user.reqUser.id) { // Only create notification if not own post
+
+    if (post.user.id !== user.reqUser.id) {
       const notification = {
         message: `${user.reqUser.username} commented: ${commentContent}`,
         type: "COMMENT",
-        postId: post.id
+        postId: post.id,
       };
       dispatch(createNotificationAction(notification, token));
     }
@@ -95,13 +90,12 @@ const PostCard = ({
     dispatch(likePostAction(data));
     setIsPostLiked(true);
     setNumberOfLike(numberOfLikes + 1);
-    
-  
-    if (post.user.id !== user.reqUser.id) { 
+
+    if (post.user.id !== user.reqUser.id) {
       const notification = {
         message: `${user.reqUser.username} liked your post`,
         type: "LIKE",
-        postId: post.id
+        postId: post.id,
       };
       dispatch(createNotificationAction(notification, token));
     }
@@ -128,13 +122,13 @@ const PostCard = ({
   };
 
   const handleNextMedia = () => {
-    setCurrentMediaIndex(prev => 
+    setCurrentMediaIndex((prev) =>
       prev === post.mediaUrls.length - 1 ? 0 : prev + 1
     );
   };
 
   const handlePrevMedia = () => {
-    setCurrentMediaIndex(prev => 
+    setCurrentMediaIndex((prev) =>
       prev === 0 ? post.mediaUrls.length - 1 : prev - 1
     );
   };
@@ -190,166 +184,180 @@ const PostCard = ({
   };
 
   return (
-    <div>
-      <div className="flex flex-col items-center w-full border rounded-md">
-        <div className="flex justify-between items-center w-full py-4 px-5">
-          <div className="flex items-center">
-            <img
-              className="w-12 h-12 rounded-full"
-              src={
-                post.user.userImage ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              }
-              alt=""
-            />
-
-            <div className="pl-2">
-              <p className="font-semibold text-sm flex items-center">
-                <span
-                  onClick={() => handleNavigate(username)}
-                  className="cursor-pointer"
-                >
-                  {post?.user?.username}
-                </span>
-                <span className="opacity-50 flex items-center">
-                  <BsDot />
-                  {timeDifference(post?.createdAt)}
-                </span>
-              </p>
-              <p className="font-thin text-sm">{location}</p>
+    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md mb-4">
+      {/* Post Header */}
+      <div className="flex items-center justify-between p-3 border-b">
+        <div className="flex items-center">
+          <img
+            className="w-10 h-10 rounded-full object-cover"
+            src={
+              post.user.userImage ||
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            }
+            alt=""
+          />
+          <div className="ml-2">
+            <div
+              className="font-semibold text-sm hover:underline cursor-pointer"
+              onClick={() => handleNavigate(username)}
+            >
+              {post?.user?.username}
             </div>
+            <div className="text-xs text-gray-500">
+              {timeDifference(post?.createdAt)} • {location}
+            </div>
+          </div>
+        </div>
+        {isOwnPost && (
+          <div className="relative">
+            <BsThreeDots
+              onClick={handleClick}
+              className="dots text-gray-500 cursor-pointer hover:bg-gray-100 rounded-full p-1"
+              size={20}
+            />
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <div className="py-1">
+                  <button
+                    onClick={handleOpenEditPostModal}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Edit Post
+                  </button>
+                  <button
+                    onClick={() => handleDeletePost(post.id)}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
+                  >
+                    Delete Post
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Post Content */}
+      <div className="p-3">
+        <p className="mb-2">{post.caption}</p>
+      </div>
+
+      {/* Media Section */}
+      <div className="relative">
+        {post.mediaUrls?.map((url, index) => (
+          <div
+            key={index}
+            className={`${index === currentMediaIndex ? "block" : "hidden"}`}
+          >
+            {isVideo(url) ? (
+              <video src={url} controls className="w-full" />
+            ) : (
+              <img
+                src={url}
+                alt={`Post media ${index + 1}`}
+                className="w-full"
+              />
+            )}
+          </div>
+        ))}
+
+        {post.mediaUrls?.length > 1 && (
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
+            {post.mediaUrls?.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentMediaIndex(index)}
+                className={`w-2 h-2 rounded-full ${
+                  index === currentMediaIndex ? "bg-blue-500" : "bg-gray-300"
+                }`}
+                aria-label={`Go to media ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Likes and Comments Count */}
+      <div className="px-4 py-2 border-b border-t text-sm text-gray-500">
+        <div className="flex justify-between">
+          <div className="flex items-center">
+            {numberOfLikes > 0 && (
+              <>
+                <div className="bg-blue-500 text-white rounded-full p-1 mr-1">
+                  <AiFillLike size={12} />
+                </div>
+                <span>{numberOfLikes}</span>
+              </>
+            )}
           </div>
           <div>
-            <div className="dropdown">
-              <BsThreeDots onClick={handleClick} className="dots" />
-              {isOwnPost && (
-                <div className="dropdown-content">
-                  {showDropdown && (
-                    <div className="p-2 w-[10rem] shadow-xl bg-white">
-                      <p
-                        onClick={handleOpenEditPostModal}
-                        className="hover:bg-slate-300 py-2 px-4 cursor-pointer font-semibold"
-                      >
-                        Edit
-                      </p>
-                      <hr />
-                      <p
-                        onClick={() => handleDeletePost(post.id)}
-                        className="hover:bg-slate-300 px-4 py-2 cursor-pointer font-semibold"
-                      >
-                        Delete
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Media Slider Section */}
-        <div className="w-full relative">
-          {post.mediaUrls?.map((url, index) => (
-            <div
-              key={index}
-              className={`${index === currentMediaIndex ? "block" : "hidden"}`}
-            >
-              {isVideo(url) ? (
-                <video
-                  src={url}
-                  controls
-                  className="w-full"
-                />
-              ) : (
-                <img
-                  src={url}
-                  alt={`Post media ${index + 1}`}
-                  className="w-full"
-                />
-              )}
-            </div>
-          ))}
-
-          {post.mediaUrls?.length > 1 && (
-            <>
-              {}
-              <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
-                {post.mediaUrls?.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentMediaIndex(index)}
-                    className={`w-2 h-2 rounded-full ${
-                      index === currentMediaIndex ? "bg-blue-500" : "bg-gray-300"
-                    }`}
-                    aria-label={`Go to media ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center w-full px-5 py-4">
-          <div className="flex items-center space-x-2">
-            {isPostLiked ? (
-              <AiFillHeart
-                onClick={handleUnLikePost}
-                className="text-2xl hover:opacity-50 cursor-pointer text-red-600"
-              />
-            ) : (
-              <AiOutlineHeart
-                onClick={handleLikePost}
-                className="text-2xl hover:opacity-50 cursor-pointer"
-              />
-            )}
-            <FaRegComment
-              onClick={handleOpenCommentModal}
-              className="text-xl hover:opacity-50 cursor-pointer"
-            />
-            <RiSendPlaneLine className="text-xl hover:opacity-50 cursor-pointer" />
-          </div>
-          <div className="cursor-pointer">
-            {isSaved ? (
-              <BsBookmarkFill
-                onClick={handleUnSavePost}
-                className="text-xl"
-              />
-            ) : (
-              <BsBookmark
-                onClick={handleSavePost}
-                className="text-xl hover:opacity-50 cursor-pointer"
-              />
+            {post?.comments?.length > 0 && (
+              <span
+                className="hover:underline cursor-pointer"
+                onClick={handleOpenCommentModal}
+              >
+                {post?.comments?.length} comments
+              </span>
             )}
           </div>
         </div>
-        <div className="w-full py-2 px-5">
-          {numberOfLikes > 0 && (
-            <p className="text-sm">{numberOfLikes} likes</p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="px-4 py-2 flex justify-between text-gray-500">
+        <button
+          onClick={isPostLiked ? handleUnLikePost : handleLikePost}
+          className={`flex items-center justify-center w-full py-1 rounded hover:bg-gray-100 ${
+            isPostLiked ? "text-blue-500" : ""
+          }`}
+        >
+          <AiOutlineLike className="mr-1" size={18} />
+          <span>Like</span>
+        </button>
+        <button
+          onClick={handleOpenCommentModal}
+          className="flex items-center justify-center w-full py-1 rounded hover:bg-gray-100"
+        >
+          <FaRegComment className="mr-1" size={16} />
+          <span>Comment</span>
+        </button>
+        <button className="flex items-center justify-center w-full py-1 rounded hover:bg-gray-100">
+          <FaShare className="mr-1" size={16} />
+          <span>Share</span>
+        </button>
+        <button
+          onClick={isSaved ? handleUnSavePost : handleSavePost}
+          className="flex items-center justify-center w-full py-1 rounded hover:bg-gray-100"
+        >
+          {isSaved ? (
+            <FaBookmark className="mr-1" size={16} />
+          ) : (
+            <FaRegBookmark className="mr-1" size={16} />
           )}
-          <p className="py-2">
-            <span className="font-semibold">{post?.user?.username}</span> {post.caption}
-          </p>
-          {post?.comments?.length > 0 && (
-            <p
-              onClick={handleOpenCommentModal}
-              className="opacity-50 text-sm py-2 -z-0 cursor-pointer"
-            >
-              View all {post?.comments?.length} comments
-            </p>
-          )}
-        </div>
-        <div className="border border-t w-full">
-          <div className="w-full flex items-center px-5">
-            <BsEmojiSmile />
-            <input
-              onKeyPress={handleOnEnterPress}
-              onChange={handleCommentInputChange}
-              value={commentContent}
-              className="commentInput"
-              type="text"
-              placeholder="Add a comment..."
-            />
-          </div>
+          <span>Save</span>
+        </button>
+      </div>
+
+      {/* Comment Input */}
+      <div className="flex items-center p-3 border-t">
+        <img
+          className="w-8 h-8 rounded-full object-cover mr-2"
+          src={
+            user.reqUser?.userImage ||
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+          }
+          alt=""
+        />
+        <div className="flex-1 relative">
+          <input
+            onKeyPress={handleOnEnterPress}
+            onChange={handleCommentInputChange}
+            value={commentContent}
+            className="w-full bg-gray-100 rounded-full py-2 px-4 text-sm focus:outline-none"
+            type="text"
+            placeholder="Write a comment..."
+          />
+          <BsEmojiSmile className="absolute right-3 top-2 text-gray-400" />
         </div>
       </div>
 

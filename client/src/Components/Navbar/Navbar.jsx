@@ -4,12 +4,10 @@ import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import CreatePostModal from "../Post/Create/CreatePostModal";
 import CreateReelModal from "../Create/CreateReel";
-import SearchComponent from "../SearchComponent/SearchComponent";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Home");
-  const [isSearchBoxVisible, setIsSearchBoxVisible] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useSelector((store) => store);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -21,7 +19,7 @@ const Navbar = () => {
     { title: "Explore" },
     { title: "Notifications" },
     { title: "About Us" },
-    { title: "Search" },
+    
   ];
 
   const handleTabClick = (tab) => {
@@ -54,14 +52,10 @@ const Navbar = () => {
       case "Learning Progress":
         navigate("/learning-progress");
         break;
-      case "Search":
-        setIsSearchBoxVisible(true);
-        return;
-      default:
-        break;
+      
     }
 
-    setIsSearchBoxVisible(false);
+    
   };
 
   const handleLogout = () => {
@@ -170,12 +164,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Search Box */}
-      {isSearchBoxVisible && (
-        <div className="absolute top-16 right-6 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 p-4">
-          <SearchComponent setIsSearchVisible={setIsSearchBoxVisible} />
-        </div>
-      )}
+      
 
       {/* Modals */}
       <CreatePostModal onClose={onClose} isOpen={isOpen} onOpen={onOpen} />

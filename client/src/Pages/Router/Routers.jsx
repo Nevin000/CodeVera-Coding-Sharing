@@ -10,7 +10,6 @@ import EditProfilePage from "../EditProfile/EditProfilePage";
 import HomePage from "../HomePage/HomePage";
 import Profile from "../Profile/Profile";
 import Story from "../Story/Story";
-import ReelViewer from "../ReelViewer/ReelViewer";
 import CreateStory from "../../Components/Story/CreateStory";
 import Notification from "../../Components/Notification/Notification";
 import LearningPlan from "../../Components/LearningPlan/LearningPlan";
@@ -52,7 +51,6 @@ const Routers = () => {
               <Route path="/demo" element={<StoryPage />} />
               <Route path="/story/:userId" element={<Story />} />
               <Route path="/account/edit" element={<EditProfilePage />} />
-              <Route path="/reels" element={<ReelViewer />} />
               <Route path="/notifications" element={<Notification />} />
               <Route path="/create-story" element={<CreateStory />} />
               <Route path="/learning_plan" element={<LearningPlan />} />
