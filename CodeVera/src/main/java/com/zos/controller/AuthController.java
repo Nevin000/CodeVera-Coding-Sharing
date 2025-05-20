@@ -116,17 +116,25 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<User> registerUserHandler(@RequestBody User user) throws UserException {
+public ResponseEntity<?> registerUserHandler(@RequestBody User user) throws UserException {
 
+    // Step 1: Register the user
+    User createdUser = userService.registerUser(user);
 
-        User createdUser = userService.registerUser(user);
+    // Step 2: Generate a JWT token
+    String token = jwtTokenProvider.generateToken(createdUser);
 
-        System.out.println("createdUser --- " + createdUser);
+    // Step 3: Return user + token in response
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + token);
 
-        return new ResponseEntity<User>(createdUser, HttpStatus.CREATED);
-
-
-    }
+    return ResponseEntity.status(HttpStatus.CREATED)
+            .headers(headers)
+            .body(Map.of(
+                "user", createdUser,
+                "token", token
+            ));
+}
 
 
 }
